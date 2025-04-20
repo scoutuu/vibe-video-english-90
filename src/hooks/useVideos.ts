@@ -18,19 +18,17 @@ const EPORNER_API_BASE = "https://www.eporner.com/api/v2/video/search/?format=js
 function getApiParamsFromCategory(category: string) {
   switch (category) {
     case "Popular":
-      // Eporner doesn't have a direct "popular", trending ("top-weekly") is closest
       return "&order=top-weekly";
     case "Trending":
       return "&order=top-weekly";
     case "New":
       return "&order=latest";
     case "Recommended":
-      // No direct recommended, so fall back to newest
       return "&order=latest";
     case "All":
       return "&order=latest";
     default:
-      // Assume user is picking a category, use `query` param
+      // Assume user is searching if not a predefined category
       return `&query=${encodeURIComponent(category)}`;
   }
 }
@@ -54,8 +52,11 @@ export function useVideos(category: string) {
   return useQuery({
     queryKey: ["videos", category],
     queryFn: async (): Promise<Video[]> => {
+      console.log("Fetching videos with category:", category);
       // Build the correct URL according to wanted filter
       const url = EPORNER_API_BASE + getApiParamsFromCategory(category);
+      console.log("API URL:", url);
+      
       const res = await fetch(url, { headers: { Accept: "application/json" } });
       if (!res.ok) {
         throw new Error("Failed to fetch videos");
