@@ -14,11 +14,15 @@ type VideoCardProps = {
 
 const VideoCard = ({ id, title, category, duration, thumbnail, views = "N/A" }: VideoCardProps) => {
   const navigate = useNavigate();
+  
+  // Ensure we have a valid ID
   const videoId = id || Math.random().toString(36).substring(7);
   
   const handleClick = () => {
+    console.log("Navigating to video with ID:", videoId);
     navigate(`/watch/${videoId}`, { 
       state: { 
+        id: videoId,
         title, 
         category, 
         duration, 
