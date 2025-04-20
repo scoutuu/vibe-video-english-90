@@ -18,7 +18,7 @@ interface VideoDetails {
   embed?: string;
 }
 
-const fetchVideoEmbed = async (id: string): Promise<string | undefined> => {
+const fetchVideoEmbed = async (id: string): Promise<string> => {
   try {
     console.log("Fetching video embed for ID:", id);
     const url = `https://www.eporner.com/api/v2/video/id/?format=json&id=${id}&thumbsize=medium&data=mp4`;
@@ -33,10 +33,16 @@ const fetchVideoEmbed = async (id: string): Promise<string | undefined> => {
     const data = await res.json();
     console.log("Video API response:", data);
     
-    return data?.video?.embed;
+    if (data?.video?.embed) {
+      return data.video.embed;
+    } else if (data?.embed) {
+      return data.embed;
+    }
+    
+    throw new Error("No embed URL found in response");
   } catch (error) {
     console.error("Error fetching video embed:", error);
-    return undefined;
+    throw error;
   }
 };
 
@@ -62,8 +68,10 @@ const Watch = () => {
   // Fetch video embed if we have an ID
   const { data: embedUrl, isLoading, error } = useQuery({
     queryKey: ["videoEmbed", id],
-    queryFn: () => id ? fetchVideoEmbed(id) : Promise.resolve(undefined),
+    queryFn: () => id ? fetchVideoEmbed(id) : Promise.reject("No video ID provided"),
     enabled: !!id,
+    retry: 2,
+    refetchOnWindowFocus: false,
   });
   
   // Update video details with embed URL when available

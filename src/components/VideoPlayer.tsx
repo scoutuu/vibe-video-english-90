@@ -26,7 +26,8 @@ const VideoPlayer = ({ src, title, autoplay = true, poster }: VideoPlayerProps) 
       return srcMatch ? srcMatch[1] : undefined;
     }
     
-    return src;
+    // Clean URL if needed (remove trailing slashes, etc.)
+    return src.trim();
   };
   
   const processedSrc = getProcessedSrc(src);
@@ -35,6 +36,8 @@ const VideoPlayer = ({ src, title, autoplay = true, poster }: VideoPlayerProps) 
     if (processedSrc) {
       setIsLoading(true);
       setError(false);
+      
+      console.log("Video player using source:", processedSrc);
       
       // This timeout simulates the loading process
       const timer = setTimeout(() => {
@@ -45,11 +48,13 @@ const VideoPlayer = ({ src, title, autoplay = true, poster }: VideoPlayerProps) 
       return () => clearTimeout(timer);
     } else if (src) {
       // We have a src but it's invalid
+      console.error("Invalid video source provided:", src);
       setError(true);
       setIsLoading(false);
       toast.error("Unable to load video source");
     } else {
       // No src provided
+      console.error("No video source provided");
       setError(true);
       setIsLoading(false);
     }
@@ -81,10 +86,15 @@ const VideoPlayer = ({ src, title, autoplay = true, poster }: VideoPlayerProps) 
           frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
-          onLoad={() => setIsLoading(false)}
-          onError={() => {
+          onLoad={() => {
+            console.log("Video iframe loaded successfully");
+            setIsLoading(false);
+          }}
+          onError={(e) => {
+            console.error("Error loading video iframe:", e);
             setError(true);
             setIsLoading(false);
+            toast.error("Failed to load video player");
           }}
         ></iframe>
       </div>

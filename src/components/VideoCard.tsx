@@ -12,7 +12,7 @@ type VideoCardProps = {
   embed?: string;
 };
 
-const VideoCard = ({ id, title, category, duration, thumbnail, views = "N/A" }: VideoCardProps) => {
+const VideoCard = ({ id, title, category, duration, thumbnail, views = "N/A", embed }: VideoCardProps) => {
   const navigate = useNavigate();
   
   // Ensure we have a valid ID
@@ -27,7 +27,8 @@ const VideoCard = ({ id, title, category, duration, thumbnail, views = "N/A" }: 
         category, 
         duration, 
         thumbnail,
-        views
+        views,
+        embed // Pass embed URL directly if available
       } 
     });
   };
