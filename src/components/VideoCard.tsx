@@ -18,6 +18,11 @@ const VideoCard = ({ id, title, category, duration, thumbnail, views = "N/A", em
   // Ensure we have a valid ID
   const videoId = id || Math.random().toString(36).substring(7);
   
+  // Format category for display
+  const displayCategory = category === "Uncategorized" || !category ? 
+    "General" : 
+    category.split(", ").slice(0, 2).join(", ");
+  
   const handleClick = () => {
     console.log("Navigating to video with ID:", videoId);
     navigate(`/watch/${videoId}`, { 
@@ -64,7 +69,13 @@ const VideoCard = ({ id, title, category, duration, thumbnail, views = "N/A", em
       </div>
       <div className="p-3">
         <h3 className="font-medium text-white text-sm line-clamp-2 mb-1">{title}</h3>
-        <div className="text-xs text-gray-400">{category}</div>
+        <div className="text-xs text-gray-400">
+          {displayCategory.length > 0 ? (
+            <span className="px-2 py-1 bg-zinc-700/50 rounded-full inline-block">{displayCategory}</span>
+          ) : (
+            <span className="px-2 py-1 bg-zinc-700/50 rounded-full inline-block">General</span>
+          )}
+        </div>
       </div>
     </div>
   );

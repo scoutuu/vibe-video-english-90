@@ -39,15 +39,29 @@ function getApiParamsFromCategory(category: string) {
  */
 function mapFromEpornerAPI(result: any): Video[] {
   if (!result || !Array.isArray(result.videos)) return [];
-  return result.videos.map((video: any) => ({
-    id: video.id || Math.random().toString(36).substring(7),
-    title: video.title,
-    category: video.tags && video.tags.length ? video.tags.join(", ") : "Uncategorized",
-    duration: video.length_min ? `${video.length_min}` : "-",
-    thumbnail: video.default_thumb?.src || (video.thumbs?.[0]?.src ?? ""),
-    embed: video.embed,
-    views: video.views ? `${video.views}` : "N/A",
-  }));
+  return result.videos.map((video: any) => {
+    // Format the categories/tags properly for display
+    let categoryText = "General";
+    if (video.tags && Array.isArray(video.tags) && video.tags.length > 0) {
+      // Capitalize first letter of each tag
+      const formattedTags = video.tags.map((tag: string) => 
+        tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase()
+      );
+      categoryText = formattedTags.join(", ");
+    } else if (video.categories && Array.isArray(video.categories) && video.categories.length > 0) {
+      categoryText = video.categories.join(", ");
+    }
+    
+    return {
+      id: video.id || Math.random().toString(36).substring(7),
+      title: video.title,
+      category: categoryText,
+      duration: video.length_min ? `${video.length_min}` : "-",
+      thumbnail: video.default_thumb?.src || (video.thumbs?.[0]?.src ?? ""),
+      embed: video.embed,
+      views: video.views ? `${video.views}` : "N/A",
+    };
+  });
 }
 
 export function useVideos(category: string) {

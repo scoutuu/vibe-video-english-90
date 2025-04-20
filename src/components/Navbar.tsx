@@ -42,10 +42,10 @@ const Navbar = ({
         className="flex-1 flex justify-center max-w-lg mx-8"
         autoComplete="off"
       >
-        <div className="flex w-full">
+        <div className="flex w-full group">
           <Input
             placeholder="Search for videos..."
-            className="w-full bg-zinc-800 text-white placeholder-gray-400 border-zinc-700 focus-visible:ring-accent focus-visible:border-accent rounded-r-none rounded-l-md"
+            className="w-full bg-zinc-800 text-white placeholder-gray-400 border-zinc-700 focus-visible:ring-accent focus-visible:border-accent rounded-r-none rounded-l-md shadow-inner group-hover:border-accent/70 transition-colors"
             type="search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -64,7 +64,7 @@ const Navbar = ({
       
       <div className="flex items-center space-x-4">
         <Select onValueChange={onCategoryChange}>
-          <SelectTrigger className="w-40 bg-zinc-800 border-none text-white focus:ring-accent">
+          <SelectTrigger className="w-40 bg-zinc-800 border-zinc-700 text-white focus:ring-accent hover:border-accent/70 transition-colors">
             <SelectValue placeholder="All Categories" />
           </SelectTrigger>
           <SelectContent className="bg-zinc-900 border-zinc-700">
