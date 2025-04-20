@@ -1,51 +1,37 @@
 
 import VideoCard from "./VideoCard";
-
-const demoVideos = [
-  {
-    title: "Sunset In The City",
-    category: "Travel",
-    duration: "7:45",
-    thumbnail: "https://images.pexels.com/photos/3401402/pexels-photo-3401402.jpeg?auto=compress&w=400&h=280&fit=crop",
-  },
-  {
-    title: "Cooking Hacks",
-    category: "Food",
-    duration: "4:02",
-    thumbnail: "https://images.pexels.com/photos/461382/pexels-photo-461382.jpeg?auto=compress&w=400&h=280&fit=crop",
-  },
-  {
-    title: "Street Dance Show",
-    category: "Art",
-    duration: "6:15",
-    thumbnail: "https://images.pexels.com/photos/1543766/pexels-photo-1543766.jpeg?auto=compress&w=400&h=280&fit=crop",
-  },
-  {
-    title: "Gardening 101",
-    category: "Education",
-    duration: "12:11",
-    thumbnail: "https://images.pexels.com/photos/296230/pexels-photo-296230.jpeg?auto=compress&w=400&h=280&fit=crop",
-  },
-  {
-    title: "Mountain Adventure",
-    category: "Adventure",
-    duration: "8:29",
-    thumbnail: "https://images.pexels.com/photos/674010/pexels-photo-674010.jpeg?auto=compress&w=400&h=280&fit=crop",
-  },
-  {
-    title: "Morning Yoga",
-    category: "Fitness",
-    duration: "35:02",
-    thumbnail: "https://images.pexels.com/photos/317157/pexels-photo-317157.jpeg?auto=compress&w=400&h=280&fit=crop",
-  },
-];
+import { useVideos } from "@/hooks/useVideos";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const VideoGrid = ({ category }: { category?: string }) => {
-  // Filter videos by category unless "All"
-  const videos =
-    category && category !== "All"
-      ? demoVideos.filter((v) => v.category === category)
-      : demoVideos;
+  const { data: videos, isLoading, error } = useVideos(category ?? "All");
+
+  if (isLoading) {
+    // Show a grid of Skeletons matching the cards
+    return (
+      <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Skeleton key={i} className="h-64 rounded-lg bg-zinc-800" />
+        ))}
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-red-400 bg-zinc-900 rounded p-4 text-center">
+        Failed to load videos. Please try again later.
+      </div>
+    );
+  }
+
+  if (!videos || videos.length === 0) {
+    return (
+      <div className="text-gray-400 flex justify-center items-center min-h-[180px]">
+        No videos found.
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
