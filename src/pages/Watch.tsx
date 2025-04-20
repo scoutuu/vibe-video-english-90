@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import Navbar from "@/components/Navbar";
 import VideoPlayer from "@/components/VideoPlayer";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Clock, Eye, Tag } from "lucide-react";
 import { toast } from "sonner";
 
 interface VideoDetails {
@@ -27,7 +27,7 @@ const fetchVideoEmbed = async (id: string): Promise<string> => {
     const res = await fetch(url);
     
     if (!res.ok) {
-      throw new Error("Failed to fetch video details");
+      throw new Error(`Failed to fetch video details: ${res.status}`);
     }
     
     const data = await res.json();
@@ -69,7 +69,7 @@ const Watch = () => {
   const { data: embedUrl, isLoading, error } = useQuery({
     queryKey: ["videoEmbed", id],
     queryFn: () => id ? fetchVideoEmbed(id) : Promise.reject("No video ID provided"),
-    enabled: !!id,
+    enabled: !!id && (!videoDetails?.embed || videoDetails?.embed === ""),
     retry: 2,
     refetchOnWindowFocus: false,
   });
@@ -124,18 +124,39 @@ const Watch = () => {
         />
         
         <div className="mt-6">
-          <h1 className="text-2xl font-bold text-white mb-2">{videoDetails?.title}</h1>
+          <h1 className="text-2xl font-bold text-white mb-4">{videoDetails?.title}</h1>
           
-          <div className="flex flex-wrap gap-4 text-sm text-gray-400">
+          <div className="flex flex-wrap gap-4 text-sm text-gray-400 mb-4">
             {videoDetails?.category && (
-              <div>Category: <span className="text-accent">{videoDetails.category}</span></div>
+              <div className="flex items-center gap-1.5">
+                <Tag className="w-4 h-4 text-accent" />
+                <span className="text-white">{videoDetails.category}</span>
+              </div>
             )}
             {videoDetails?.duration && (
-              <div>Duration: <span className="text-white">{videoDetails.duration}</span></div>
+              <div className="flex items-center gap-1.5">
+                <Clock className="w-4 h-4 text-accent" />
+                <span className="text-white">{videoDetails.duration}</span>
+              </div>
             )}
             {videoDetails?.views && videoDetails.views !== "N/A" && (
-              <div>Views: <span className="text-white">{videoDetails.views}</span></div>
+              <div className="flex items-center gap-1.5">
+                <Eye className="w-4 h-4 text-accent" />
+                <span className="text-white">{videoDetails.views}</span>
+              </div>
             )}
+          </div>
+          
+          {/* Suggested tags/keywords section */}
+          <div className="flex flex-wrap gap-2 mt-6">
+            {videoDetails?.category?.split(",").map((tag, index) => (
+              <span 
+                key={index} 
+                className="px-3 py-1 bg-zinc-800 hover:bg-accent/20 transition-colors rounded-full text-xs text-white cursor-pointer"
+              >
+                {tag.trim()}
+              </span>
+            ))}
           </div>
         </div>
       </div>

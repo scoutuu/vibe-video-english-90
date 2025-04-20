@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AlertCircle } from "lucide-react";
 
 interface VideoPlayerProps {
   src?: string;
@@ -26,7 +27,19 @@ const VideoPlayer = ({ src, title, autoplay = true, poster }: VideoPlayerProps) 
       return srcMatch ? srcMatch[1] : undefined;
     }
     
-    // Clean URL if needed (remove trailing slashes, etc.)
+    // If it's just a URL, ensure it's properly formatted
+    if (src.includes('eporner.com/embed')) {
+      // It's already an embed URL, use it directly
+      return src.trim();
+    } else if (src.includes('eporner.com') && src.includes('/hd-porn/')) {
+      // Convert regular URL to embed URL if needed
+      const idMatch = src.match(/\/hd-porn\/([^\/]+)\//);
+      if (idMatch && idMatch[1]) {
+        return `https://www.eporner.com/embed/${idMatch[1]}/`;
+      }
+    }
+    
+    // Return the original URL if we couldn't process it
     return src.trim();
   };
   
@@ -105,6 +118,7 @@ const VideoPlayer = ({ src, title, autoplay = true, poster }: VideoPlayerProps) 
   return (
     <div className="relative pt-[56.25%] w-full bg-zinc-900 rounded-lg overflow-hidden flex items-center justify-center shadow-md">
       <div className="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center text-center p-4">
+        <AlertCircle className="text-accent w-8 h-8 mb-3" />
         <p className="text-gray-400 text-lg mb-2">Video unavailable</p>
         <p className="text-gray-500 text-sm">The video source could not be loaded</p>
       </div>
