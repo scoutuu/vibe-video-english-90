@@ -2,6 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 export type Video = {
+  id?: string;
   title: string;
   category: string;
   duration: string;
@@ -39,12 +40,13 @@ function getApiParamsFromCategory(category: string) {
 function mapFromEpornerAPI(result: any): Video[] {
   if (!result || !Array.isArray(result.videos)) return [];
   return result.videos.map((video: any) => ({
+    id: video.id || Math.random().toString(36).substring(7),
     title: video.title,
     category: video.tags && video.tags.length ? video.tags.join(", ") : "Uncategorized",
-    duration: video.length_min ? `${video.length_min} min` : "-",
+    duration: video.length_min ? `${video.length_min}` : "-",
     thumbnail: video.default_thumb?.src || (video.thumbs?.[0]?.src ?? ""),
     embed: video.embed,
-    views: video.views ?? "",
+    views: video.views ? `${video.views}` : "N/A",
   }));
 }
 
@@ -57,12 +59,17 @@ export function useVideos(category: string) {
       const url = EPORNER_API_BASE + getApiParamsFromCategory(category);
       console.log("API URL:", url);
       
-      const res = await fetch(url, { headers: { Accept: "application/json" } });
-      if (!res.ok) {
-        throw new Error("Failed to fetch videos");
+      try {
+        const res = await fetch(url, { headers: { Accept: "application/json" } });
+        if (!res.ok) {
+          throw new Error("Failed to fetch videos");
+        }
+        const data = await res.json();
+        return mapFromEpornerAPI(data);
+      } catch (error) {
+        console.error("Error fetching videos:", error);
+        throw error;
       }
-      const data = await res.json();
-      return mapFromEpornerAPI(data);
     },
   });
 }
