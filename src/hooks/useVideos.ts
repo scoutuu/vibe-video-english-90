@@ -11,7 +11,8 @@ export type Video = {
   views?: string;
 };
 
-const EPORNER_API_BASE = "https://www.eporner.com/api/v2/video/search/?format=json&lq=1&per_page=24";
+// Using a higher quality setting (removing lq=1 parameter)
+const EPORNER_API_BASE = "https://www.eporner.com/api/v2/video/search/?format=json&per_page=24";
 
 /**
  * Takes UI category name and returns Eporner-API fetch params
@@ -52,12 +53,23 @@ function mapFromEpornerAPI(result: any): Video[] {
       categoryText = video.categories.join(", ");
     }
     
+    // Get the best thumbnail available
+    let thumbnailUrl = "";
+    if (video.default_thumb?.src) {
+      // Use the default thumbnail if available
+      thumbnailUrl = video.default_thumb.src;
+    } else if (video.thumbs && Array.isArray(video.thumbs) && video.thumbs.length > 0) {
+      // Try to get the best quality thumbnail
+      const mediumThumb = video.thumbs.find((thumb: any) => thumb.size === "medium" || thumb.size === "big");
+      thumbnailUrl = mediumThumb ? mediumThumb.src : video.thumbs[0].src;
+    }
+    
     return {
       id: video.id || Math.random().toString(36).substring(7),
       title: video.title,
       category: categoryText,
       duration: video.length_min ? `${video.length_min}` : "-",
-      thumbnail: video.default_thumb?.src || (video.thumbs?.[0]?.src ?? ""),
+      thumbnail: thumbnailUrl,
       embed: video.embed,
       views: video.views ? `${video.views}` : "N/A",
     };

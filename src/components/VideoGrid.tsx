@@ -17,7 +17,9 @@ const VideoGrid = ({ category }: { category?: string }) => {
       <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
         {Array.from({ length: 8 }).map((_, i) => (
           <div key={i} className="rounded-lg overflow-hidden">
-            <Skeleton className="h-44 w-full bg-zinc-800/50" />
+            <div className="relative pt-[56.25%] bg-zinc-800/50">
+              <Skeleton className="absolute inset-0 w-full h-full bg-zinc-800/50" />
+            </div>
             <div className="p-3 space-y-2">
               <Skeleton className="h-4 w-full bg-zinc-800/50" />
               <Skeleton className="h-3 w-1/2 bg-zinc-800/50" />
@@ -48,7 +50,7 @@ const VideoGrid = ({ category }: { category?: string }) => {
 
   return (
     <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-      {videos.map((video, idx) => (
+      {videos?.map((video, idx) => (
         <VideoCard 
           key={video.id || idx} 
           id={video.id || `video-${idx}`}

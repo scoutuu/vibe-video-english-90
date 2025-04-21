@@ -1,6 +1,7 @@
 
 import { PlayIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 type VideoCardProps = {
   id?: string;
@@ -44,15 +45,17 @@ const VideoCard = ({ id, title, category, duration, thumbnail, views = "N/A", em
       className="rounded-lg overflow-hidden bg-zinc-800 video-card-hover p-0 shadow-md cursor-pointer group"
     >
       <div className="relative">
-        <img
-          src={thumbnail}
-          alt={title}
-          className="w-full h-44 object-cover"
-          loading="lazy"
-          onError={(e) => {
-            e.currentTarget.src = "https://via.placeholder.com/320x180/1a1a1a/cccccc?text=Video+Thumbnail";
-          }}
-        />
+        <AspectRatio ratio={16/9} className="bg-zinc-900">
+          <img
+            src={thumbnail}
+            alt={title}
+            className="w-full h-full object-cover"
+            loading="lazy"
+            onError={(e) => {
+              e.currentTarget.src = "https://via.placeholder.com/640x360/1a1a1a/cccccc?text=Video+Thumbnail";
+            }}
+          />
+        </AspectRatio>
         <div className="absolute bottom-2 left-2 bg-black/70 px-2 py-1 rounded text-xs text-white">
           {duration}
         </div>
