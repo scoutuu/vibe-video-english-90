@@ -53,15 +53,34 @@ function mapFromEpornerAPI(result: any): Video[] {
       categoryText = video.categories.join(", ");
     }
     
-    // Get the best thumbnail available
+    // Improved thumbnail selection logic
     let thumbnailUrl = "";
-    if (video.default_thumb?.src) {
-      // Use the default thumbnail if available
+    
+    // Try to get the best quality thumbnail
+    if (video.thumbs && Array.isArray(video.thumbs) && video.thumbs.length > 0) {
+      // First, try to find a mid-sequence thumbnail (around 50-70% through the available thumbs)
+      // This often shows a more representative frame than the first or last thumbnails
+      const midIndex = Math.floor(video.thumbs.length * 0.6);
+      const midThumb = video.thumbs[midIndex];
+      
+      // Next, prioritize medium or big size for better quality
+      const bigThumb = video.thumbs.find((thumb: any) => thumb.size === "big");
+      const mediumThumb = video.thumbs.find((thumb: any) => thumb.size === "medium");
+      
+      if (midThumb && midThumb.src) {
+        thumbnailUrl = midThumb.src;
+      } else if (bigThumb && bigThumb.src) {
+        thumbnailUrl = bigThumb.src;
+      } else if (mediumThumb && mediumThumb.src) {
+        thumbnailUrl = mediumThumb.src;
+      } else if (video.default_thumb?.src) {
+        thumbnailUrl = video.default_thumb.src;
+      } else {
+        // Fallback to the first thumbnail
+        thumbnailUrl = video.thumbs[0].src;
+      }
+    } else if (video.default_thumb?.src) {
       thumbnailUrl = video.default_thumb.src;
-    } else if (video.thumbs && Array.isArray(video.thumbs) && video.thumbs.length > 0) {
-      // Try to get the best quality thumbnail
-      const mediumThumb = video.thumbs.find((thumb: any) => thumb.size === "medium" || thumb.size === "big");
-      thumbnailUrl = mediumThumb ? mediumThumb.src : video.thumbs[0].src;
     }
     
     return {
