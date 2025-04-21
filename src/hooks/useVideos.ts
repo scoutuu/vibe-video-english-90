@@ -21,11 +21,11 @@ function getApiParamsFromCategory(category: string) {
     case "Popular":
       return "&order=top-weekly";
     case "Trending":
-      return "&order=top-weekly";
+      return "&order=top-monthly";
     case "New":
       return "&order=latest";
     case "Recommended":
-      return "&order=latest";
+      return "&order=top-rated";
     case "All":
       return "&order=latest";
     default:
@@ -79,6 +79,7 @@ export function useVideos(category: string) {
           throw new Error("Failed to fetch videos");
         }
         const data = await res.json();
+        console.log("API returned videos count:", data.videos?.length || 0);
         return mapFromEpornerAPI(data);
       } catch (error) {
         console.error("Error fetching videos:", error);

@@ -2,13 +2,19 @@
 import VideoCard from "./VideoCard";
 import { useVideos } from "@/hooks/useVideos";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useEffect } from "react";
 
 const VideoGrid = ({ category }: { category?: string }) => {
-  const { data: videos, isLoading, error } = useVideos(category ?? "All");
+  const { data: videos, isLoading, error, refetch } = useVideos(category ?? "All");
+
+  // Refetch when category changes
+  useEffect(() => {
+    refetch();
+  }, [category, refetch]);
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
         {Array.from({ length: 8 }).map((_, i) => (
           <div key={i} className="rounded-lg overflow-hidden">
             <Skeleton className="h-44 w-full bg-zinc-800/50" />
@@ -41,7 +47,7 @@ const VideoGrid = ({ category }: { category?: string }) => {
   }
 
   return (
-    <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
       {videos.map((video, idx) => (
         <VideoCard 
           key={video.id || idx} 
