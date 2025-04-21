@@ -34,7 +34,8 @@ const VideoCard = ({ id, title, category, duration, thumbnail, views = "N/A", em
         duration, 
         thumbnail,
         views,
-        embed // Pass embed URL directly if available
+        embed, // Pass embed URL directly if available
+        autoplay: true // Add autoplay flag
       } 
     });
   };
@@ -43,6 +44,7 @@ const VideoCard = ({ id, title, category, duration, thumbnail, views = "N/A", em
     <div 
       onClick={handleClick}
       className="rounded-lg overflow-hidden bg-zinc-800 video-card-hover p-0 shadow-md cursor-pointer group"
+      aria-label={`Play ${title}`}
     >
       <div className="relative">
         <AspectRatio ratio={16/9} className="bg-zinc-900">

@@ -26,8 +26,17 @@ const VideoPlayer = ({ src, title, autoplay = true, poster }: VideoPlayerProps) 
       return srcMatch ? srcMatch[1] : undefined;
     }
     
-    // Clean URL if needed (remove trailing slashes, etc.)
-    return src.trim();
+    // Add autoplay parameter to URL if it's not already there
+    let processedUrl = src.trim();
+    if (autoplay) {
+      // Add autoplay parameter based on URL structure
+      const hasParams = processedUrl.includes('?');
+      processedUrl = hasParams 
+        ? `${processedUrl}&autoplay=1` 
+        : `${processedUrl}?autoplay=1`;
+    }
+    
+    return processedUrl;
   };
   
   const processedSrc = getProcessedSrc(src);
