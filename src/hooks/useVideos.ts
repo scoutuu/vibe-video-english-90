@@ -1,6 +1,5 @@
 
 import { useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
 
 export type Video = {
   id?: string;
@@ -75,24 +74,16 @@ export function useVideos(category: string) {
       console.log("API URL:", url);
       
       try {
-        const res = await fetch(url, { 
-          headers: { Accept: "application/json" },
-          signal: AbortSignal.timeout(10000) // 10 second timeout
-        });
-        
+        const res = await fetch(url, { headers: { Accept: "application/json" } });
         if (!res.ok) {
-          throw new Error(`Failed to fetch videos: ${res.status}`);
+          throw new Error("Failed to fetch videos");
         }
-        
         const data = await res.json();
         return mapFromEpornerAPI(data);
       } catch (error) {
         console.error("Error fetching videos:", error);
-        toast.error("Failed to load videos. Please try again.");
         throw error;
       }
     },
-    refetchOnWindowFocus: false,
-    staleTime: 60000, // 1 minute
   });
 }
