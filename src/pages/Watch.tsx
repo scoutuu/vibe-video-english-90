@@ -16,7 +16,6 @@ interface VideoDetails {
   thumbnail?: string;
   views?: string;
   embed?: string;
-  autoplay?: boolean;
 }
 
 const fetchVideoEmbed = async (id: string): Promise<string> => {
@@ -61,8 +60,7 @@ const Watch = () => {
       // No state passed, only have the ID
       setVideoDetails({
         title: "Loading video...",
-        id: id,
-        autoplay: true // Default to autoplay
+        id: id
       });
     }
   }, [location.state, id]);
@@ -123,7 +121,6 @@ const Watch = () => {
           src={videoDetails?.embed} 
           title={videoDetails?.title || "Video"}
           poster={videoDetails?.thumbnail}
-          autoplay={videoDetails?.autoplay !== false} // Default to true if not explicitly set to false
         />
         
         <div className="mt-6">
