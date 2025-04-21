@@ -30,10 +30,12 @@ const VideoPlayer = ({ src, title, autoplay = true, poster }: VideoPlayerProps) 
     let processedUrl = src.trim();
     if (autoplay) {
       // Add autoplay parameter based on URL structure
-      const hasParams = processedUrl.includes('?');
-      processedUrl = hasParams 
-        ? `${processedUrl}&autoplay=1` 
-        : `${processedUrl}?autoplay=1`;
+      if (!processedUrl.includes('autoplay=')) {
+        const hasParams = processedUrl.includes('?');
+        processedUrl = hasParams 
+          ? `${processedUrl}&autoplay=1` 
+          : `${processedUrl}?autoplay=1`;
+      }
     }
     
     return processedUrl;

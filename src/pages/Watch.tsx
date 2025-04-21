@@ -52,8 +52,10 @@ const Watch = () => {
 
   useEffect(() => {
     if (location.state) {
+      // If we have state from navigation, use it including any pre-fetched embed URL
       setVideoDetails(location.state as VideoDetails);
     } else if (id) {
+      // If no state but we have an ID, set up minimal details and force autoplay
       setVideoDetails({
         title: "Loading video...",
         id: id,
@@ -128,7 +130,7 @@ const Watch = () => {
           src={videoDetails?.embed}
           title={videoDetails?.title || "Video"}
           poster={videoDetails?.thumbnail}
-          autoplay={videoDetails?.autoplay !== false}
+          autoplay={true} // Force autoplay to always be true
         />
         <div className="mt-6">
           <h1 className="text-2xl font-bold text-white mb-2">
@@ -153,6 +155,7 @@ const Watch = () => {
             )}
           </div>
         </div>
+
         {/* Suggested Videos Section */}
         <div className="mt-12">
           <h2 className="text-lg font-semibold text-white mb-4">Suggested Videos</h2>
@@ -178,4 +181,3 @@ const Watch = () => {
 };
 
 export default Watch;
-
